@@ -1,0 +1,5 @@
+{
+  "name": "Plant Disease Recognition",
+  "description": "Identify plant diseases from images using machine learning.",
+  "requestFramePermissions": []
+}
