@@ -189,7 +189,7 @@ export default function Recognition() {
                   </p>
                   
                   {/* Action Buttons */}
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-sm mx-auto">
+                  <div className="flex flex-col items-center justify-center gap-3 w-full max-w-sm mx-auto">
                     <Button 
                       variant="secondary" 
                       className="w-full bg-white/10 hover:bg-white/20 text-white border-none cursor-pointer"
