@@ -1,14 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowRight,
-  CheckCircle2,
-  Zap,
-  ShieldCheck,
-  Loader2,
-  ChevronRight,
-} from "lucide-react";
+import { CheckCircle2, Zap, ShieldCheck, ChevronRight } from "lucide-react";
 import { AnimatedGlowTextBadge } from "@/components/custom-ui/animated-glow-text-badge";
 import { ModeCard } from "@/components/custom-ui/mode-card";
 import { Button } from "@/components/ui/button";
@@ -27,12 +20,14 @@ export default function Home() {
               </AnimatedGlowTextBadge>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight text-white leading-tight drop-shadow-2xl">
-              Plant Disease
+            <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight text-white leading-tight">
+              {/* Optional: If you still want the drop shadow on "Plant Disease", put it here */}
+              <span className="drop-shadow-2xl">Plant Disease</span>
               <br />
               <>
+                {/* Rename to textGlowCycle */}
                 <style>{`
-@keyframes colorGlowCycle {
+@keyframes textGlowCycle {
   0% {
     color:#60a5fa;
     text-shadow:0 0 6px rgba(96,165,250,0.4),0 0 16px rgba(96,165,250,0.3),0 0 32px rgba(96,165,250,0.2);
@@ -57,8 +52,10 @@ export default function Home() {
 `}</style>
 
                 <span
+                  className="inline-block py-2"
                   style={{
-                    animation: "colorGlowCycle 20s ease-in-out infinite",
+                    /* Use the new name here */
+                    animation: "textGlowCycle 20s ease-in-out infinite",
                   }}
                 >
                   Recognition System
@@ -73,10 +70,11 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-  <Link href="/recognition">
-    <>
-      <style>{`
-@keyframes colorGlowCycle {
+              <Link href="/recognition">
+                <>
+                  {/* Rename to buttonGlowCycle */}
+                  <style>{`
+@keyframes buttonGlowCycle {
   0% {
     color:#60a5fa;
     border-color:rgba(96,165,250,0.4);
@@ -110,20 +108,21 @@ export default function Home() {
 }
 
 .glow-cycle-btn {
-  animation: colorGlowCycle 20s ease-in-out infinite;
+  /* Use the new name here */
+  animation: buttonGlowCycle 20s ease-in-out infinite;
   text-shadow:
     0 0 6px currentColor,
     0 0 16px rgba(255,255,255,0.1);
 }
 `}</style>
 
-      <Button className="group text-lg glow-cycle-btn rounded-full border px-7 py-[16px] transition-all backdrop-blur-md hover:scale-[1.03]">
-        Start Diagnosis
-        <ChevronRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
-      </Button>
-    </>
-  </Link>
-</div>
+                  <Button className="group text-lg glow-cycle-btn rounded-full border px-7 py-[16px] transition-all backdrop-blur-md hover:scale-[1.03]">
+                    Start Diagnosis
+                    <ChevronRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
+                  </Button>
+                </>
+              </Link>
+            </div>
           </div>
         </section>
 
