@@ -87,9 +87,9 @@ export default function Recognition() {
       <div className="container mx-auto px-4 max-w-5xl relative z-10">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4 drop-shadow-lg">
-  <>
-    <style>{`
-@keyframes colorGlowCycle {
+            <>
+              <style>{`
+@keyframes textGlowCycle {
   0% {
     color:#60a5fa;
     text-shadow:0 0 6px rgba(96,165,250,0.4),0 0 16px rgba(96,165,250,0.3),0 0 32px rgba(96,165,250,0.2);
@@ -112,17 +112,16 @@ export default function Recognition() {
   }
 }
 `}</style>
-
-    <span
-      className="inline-block leading-none"
-      style={{
-        animation: "colorGlowCycle 20s ease-in-out infinite",
-      }}
-    >
-      Recognition
-    </span>
-  </>
-</h1>
+              <span
+                className="inline-block leading-none"
+                style={{
+                  animation: "textGlowCycle 20s ease-in-out infinite",
+                }}
+              >
+                Recognition
+              </span>
+            </>
+          </h1>
           <p className="text-neutral-400 text-lg">
             Upload a clear image of a plant leaf for instant analysis.
           </p>
@@ -155,6 +154,7 @@ export default function Recognition() {
                 ref={fileInputRef}
                 onChange={handleFileChange}
                 accept="image/*"
+                capture="environment"
                 className="hidden"
               />
 
@@ -219,7 +219,7 @@ export default function Recognition() {
                 <div className="flex flex-col items-center w-full">
                   <>
                     <style>{`
-@keyframes colorGlowCycle {
+@keyframes buttonGlowCycle {
   0% {
     color:#60a5fa;
     border-color:rgba(96,165,250,0.4);
@@ -253,7 +253,8 @@ export default function Recognition() {
 }
 
 .glow-cycle-btn {
-  animation: colorGlowCycle 20s ease-in-out infinite;
+  /* Use the new name here */
+  animation: buttonGlowCycle 20s ease-in-out infinite;
   text-shadow:
     0 0 6px currentColor,
     0 0 16px rgba(255,255,255,0.1);
@@ -263,13 +264,15 @@ export default function Recognition() {
                     <Button
                       onClick={handlePredict}
                       disabled={status === "analyzing"}
-                      className="glow-cycle-btn rounded-full border px-6 py-3 transition-all backdrop-blur-md hover:scale-[1.03]"
+                      className="glow-cycle-btn cursor-pointer rounded-full border px-6 py-3 transition-all backdrop-blur-md hover:scale-[1.03]"
                     >
                       {status === "analyzing"
                         ? "Analyzing..."
                         : "Diagnose Plant"}
 
-                        <Loader2 className={`h-5 w-5 ml-2 animate-spin ${status === "analyzing" ? "inline-block" : "hidden"}`} />
+                      <Loader2
+                        className={`h-5 w-5 ml-2 animate-spin ${status === "analyzing" ? "inline-block" : "hidden"}`}
+                      />
                     </Button>
                   </>
 
