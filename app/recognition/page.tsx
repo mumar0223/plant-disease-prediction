@@ -6,6 +6,8 @@ import {
   Image as ImageIcon,
   Loader2,
   CheckCircle,
+  Camera,
+  ImagePlus,
 } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
@@ -18,7 +20,10 @@ export default function Recognition() {
     "idle" | "analyzing" | "success" | "error"
   >("idle");
   const [prediction, setPrediction] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Two separate refs to handle the two different input methods
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -64,11 +69,9 @@ export default function Recognition() {
       if (!res.ok) throw new Error("Prediction failed");
 
       const data = await res.json();
-
       const result = data.prediction;
 
       setPrediction(result.replace(/___/g, " - ").replace(/_/g, " "));
-
       setStatus("success");
     } catch (error) {
       console.error(error);
@@ -89,31 +92,31 @@ export default function Recognition() {
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4 drop-shadow-lg">
             <>
               <style>{`
-@keyframes textGlowCycle {
-  0% {
-    color:#60a5fa;
-    text-shadow:0 0 6px rgba(96,165,250,0.4),0 0 16px rgba(96,165,250,0.3),0 0 32px rgba(96,165,250,0.2);
-  }
-  25% {
-    color:#22d3ee;
-    text-shadow:0 0 6px rgba(34,211,238,0.4),0 0 16px rgba(34,211,238,0.3),0 0 32px rgba(34,211,238,0.2);
-  }
-  50% {
-    color:#2dd4bf;
-    text-shadow:0 0 6px rgba(45,212,191,0.4),0 0 16px rgba(45,212,191,0.3),0 0 32px rgba(45,212,191,0.2);
-  }
-  75% {
-    color:#c084fc;
-    text-shadow:0 0 6px rgba(192,132,252,0.4),0 0 16px rgba(192,132,252,0.3),0 0 32px rgba(192,132,252,0.2);
-  }
-  100% {
-    color:#60a5fa;
-    text-shadow:0 0 6px rgba(96,165,250,0.4),0 0 16px rgba(96,165,250,0.3),0 0 32px rgba(96,165,250,0.2);
-  }
-}
-`}</style>
+                @keyframes textGlowCycle {
+                  0% {
+                    color:#60a5fa;
+                    text-shadow:0 0 6px rgba(96,165,250,0.4),0 0 16px rgba(96,165,250,0.3),0 0 32px rgba(96,165,250,0.2);
+                  }
+                  25% {
+                    color:#22d3ee;
+                    text-shadow:0 0 6px rgba(34,211,238,0.4),0 0 16px rgba(34,211,238,0.3),0 0 32px rgba(34,211,238,0.2);
+                  }
+                  50% {
+                    color:#2dd4bf;
+                    text-shadow:0 0 6px rgba(45,212,191,0.4),0 0 16px rgba(45,212,191,0.3),0 0 32px rgba(45,212,191,0.2);
+                  }
+                  75% {
+                    color:#c084fc;
+                    text-shadow:0 0 6px rgba(192,132,252,0.4),0 0 16px rgba(192,132,252,0.3),0 0 32px rgba(192,132,252,0.2);
+                  }
+                  100% {
+                    color:#60a5fa;
+                    text-shadow:0 0 6px rgba(96,165,250,0.4),0 0 16px rgba(96,165,250,0.3),0 0 32px rgba(96,165,250,0.2);
+                  }
+                }
+              `}</style>
               <span
-                className="inline-block leading-none"
+                className="inline-block py-2 leading-none"
                 style={{
                   animation: "textGlowCycle 20s ease-in-out infinite",
                 }}
@@ -143,18 +146,27 @@ export default function Recognition() {
               className={`relative z-10 flex-1 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center p-8 transition-all duration-300 ${
                 previewUrl
                   ? "border-blue-500/50 bg-blue-500/5"
-                  : "border-neutral-700 hover:border-blue-500/50 hover:bg-white/5 cursor-pointer"
+                  : "border-neutral-700 hover:border-blue-500/50 hover:bg-white/5"
               }`}
               onDragOver={handleDragOver}
               onDrop={handleDrop}
-              onClick={() => fileInputRef.current?.click()}
             >
+              {/* Input for Camera */}
               <input
                 type="file"
-                ref={fileInputRef}
+                ref={cameraInputRef}
                 onChange={handleFileChange}
                 accept="image/*"
                 capture="environment"
+                className="hidden"
+              />
+              
+              {/* Input for Gallery/Files */}
+              <input
+                type="file"
+                ref={galleryInputRef}
+                onChange={handleFileChange}
+                accept="image/*"
                 className="hidden"
               />
 
@@ -168,14 +180,35 @@ export default function Recognition() {
                   />
                 </div>
               ) : (
-                <div className="text-center">
+                <div className="text-center w-full">
                   <div className="bg-neutral-800 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner border border-neutral-700 group-hover:scale-110 transition-transform duration-500">
                     <UploadCloud className="h-10 w-10 text-blue-400" />
                   </div>
-                  <p className="font-medium text-white mb-2 text-lg">
-                    Click to upload or drag and drop
+                  <p className="font-medium text-white mb-6 text-lg">
+                    Drag and drop, or select source
                   </p>
-                  <p className="text-sm text-neutral-500">
+                  
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-sm mx-auto">
+                    <Button 
+                      variant="secondary" 
+                      className="w-full bg-white/10 hover:bg-white/20 text-white border-none cursor-pointer"
+                      onClick={() => cameraInputRef.current?.click()}
+                    >
+                      <Camera className="w-4 h-4 mr-2" />
+                      Camera
+                    </Button>
+                    <Button 
+                      variant="secondary" 
+                      className="w-full bg-white/10 hover:bg-white/20 text-white border-none cursor-pointer"
+                      onClick={() => galleryInputRef.current?.click()}
+                    >
+                      <ImagePlus className="w-4 h-4 mr-2" />
+                      Gallery
+                    </Button>
+                  </div>
+                  
+                  <p className="text-sm text-neutral-500 mt-6">
                     PNG, JPG up to 10MB
                   </p>
                 </div>
@@ -191,7 +224,7 @@ export default function Recognition() {
                   setStatus("idle");
                   setPrediction(null);
                 }}
-                className="relative z-10 mt-6 text-sm font-medium text-neutral-400 hover:text-red-400 transition-colors text-center"
+                className="relative z-10 mt-6 text-sm font-medium text-neutral-400 hover:text-red-400 transition-colors text-center cursor-pointer"
               >
                 Clear image
               </button>
@@ -219,47 +252,46 @@ export default function Recognition() {
                 <div className="flex flex-col items-center w-full">
                   <>
                     <style>{`
-@keyframes buttonGlowCycle {
-  0% {
-    color:#60a5fa;
-    border-color:rgba(96,165,250,0.4);
-    background:rgba(96,165,250,0.08);
-    box-shadow:0 0 12px rgba(96,165,250,0.25);
-  }
-  25% {
-    color:#22d3ee;
-    border-color:rgba(34,211,238,0.4);
-    background:rgba(34,211,238,0.08);
-    box-shadow:0 0 12px rgba(34,211,238,0.25);
-  }
-  50% {
-    color:#2dd4bf;
-    border-color:rgba(45,212,191,0.4);
-    background:rgba(45,212,191,0.08);
-    box-shadow:0 0 12px rgba(45,212,191,0.25);
-  }
-  75% {
-    color:#c084fc;
-    border-color:rgba(192,132,252,0.4);
-    background:rgba(192,132,252,0.08);
-    box-shadow:0 0 12px rgba(192,132,252,0.25);
-  }
-  100% {
-    color:#60a5fa;
-    border-color:rgba(96,165,250,0.4);
-    background:rgba(96,165,250,0.08);
-    box-shadow:0 0 12px rgba(96,165,250,0.25);
-  }
-}
+                      @keyframes buttonGlowCycle {
+                        0% {
+                          color:#60a5fa;
+                          border-color:rgba(96,165,250,0.4);
+                          background:rgba(96,165,250,0.08);
+                          box-shadow:0 0 12px rgba(96,165,250,0.25);
+                        }
+                        25% {
+                          color:#22d3ee;
+                          border-color:rgba(34,211,238,0.4);
+                          background:rgba(34,211,238,0.08);
+                          box-shadow:0 0 12px rgba(34,211,238,0.25);
+                        }
+                        50% {
+                          color:#2dd4bf;
+                          border-color:rgba(45,212,191,0.4);
+                          background:rgba(45,212,191,0.08);
+                          box-shadow:0 0 12px rgba(45,212,191,0.25);
+                        }
+                        75% {
+                          color:#c084fc;
+                          border-color:rgba(192,132,252,0.4);
+                          background:rgba(192,132,252,0.08);
+                          box-shadow:0 0 12px rgba(192,132,252,0.25);
+                        }
+                        100% {
+                          color:#60a5fa;
+                          border-color:rgba(96,165,250,0.4);
+                          background:rgba(96,165,250,0.08);
+                          box-shadow:0 0 12px rgba(96,165,250,0.25);
+                        }
+                      }
 
-.glow-cycle-btn {
-  /* Use the new name here */
-  animation: buttonGlowCycle 20s ease-in-out infinite;
-  text-shadow:
-    0 0 6px currentColor,
-    0 0 16px rgba(255,255,255,0.1);
-}
-`}</style>
+                      .glow-cycle-btn {
+                        animation: buttonGlowCycle 20s ease-in-out infinite;
+                        text-shadow:
+                          0 0 6px currentColor,
+                          0 0 16px rgba(255,255,255,0.1);
+                      }
+                    `}</style>
 
                     <Button
                       onClick={handlePredict}
