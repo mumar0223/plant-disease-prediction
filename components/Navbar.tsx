@@ -35,7 +35,7 @@ export default function Navbar() {
           <Link href="/" className="flex items-center gap-2 text-emerald-400">
             <Leaf className="h-6 w-6" />
             <span className="text-xl md:text-2xl font-black tracking-tighter">
-              PlantCare AI
+              AgroVision
             </span>
           </Link>
 
