@@ -64,7 +64,7 @@ export default function Home() {
             </h1>
 
             <p className="text-lg md:text-xl text-neutral-300 max-w-2xl mx-auto leading-relaxed drop-shadow-lg mb-10">
-              Upload a plant leaf image and our AI model will analyze it to
+              Upload a plant leaf image and our custom trained model will analyze it to
               detect diseases instantly. Protect your crops and ensure healthier
               harvests with intelligent diagnosis.
             </p>
@@ -149,7 +149,7 @@ export default function Home() {
               />
 
               <ModeCard
-                title="AI Analysis"
+                title="Data Analysis"
                 description="Our deep learning model analyzes the image and detects disease patterns."
                 icon={Zap}
                 themeColor="purple"
